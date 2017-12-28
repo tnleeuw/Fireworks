@@ -22,6 +22,7 @@ var Fireworks = (function() {
       mainContext = null,
       fireworkCanvas = null,
       fireworkContext = null,
+      bannerText = null,
       viewportWidth = 0,
       viewportHeight = 0;
 
@@ -47,6 +48,7 @@ var Fireworks = (function() {
 
     // set the dimensions on the canvas
     setMainCanvasDimensions();
+    bannerText = new BannerText(mainContext, viewportWidth, viewportHeight);
 
     // add the canvas in
     document.body.appendChild(mainCanvas);
@@ -54,7 +56,10 @@ var Fireworks = (function() {
     document.addEventListener('touchend', createFirework, true);
 
     // and now we set off
+    createTimedFirework();
     update();
+    createTimedFirework(1500);
+    createTimedFirework(2200);
   }
 
   /**
@@ -65,6 +70,14 @@ var Fireworks = (function() {
     createParticle();
   }
 
+    /**
+     * Create a new Firework timed every few seconds
+     */
+  function createTimedFirework(freq) {
+    createFirework(freq);
+    freq = freq || 2000;
+    window.setTimeout(createTimedFirework, freq+(2000*Math.random()))
+  }
   /**
    * Creates a block of colours for the
    * fireworks to use as their colouring
@@ -108,6 +121,7 @@ var Fireworks = (function() {
   function update() {
     clearContext();
     requestAnimFrame(update);
+    drawText();
     drawFireworks();
   }
 
@@ -156,6 +170,13 @@ var Fireworks = (function() {
     }
   }
 
+  function drawText() {
+      if (bannerText) {
+          bannerText.update();
+          bannerText.render();
+      }
+  }
+
   /**
    * Creates a new particle / firework
    */
@@ -169,7 +190,7 @@ var Fireworks = (function() {
       new Particle(
         // position
         {
-          x: pos.x || viewportWidth * 0.5,
+          x: pos.x || (viewportWidth * 0.25) + Math.random() * viewportWidth * 0.5,
           y: pos.y || viewportHeight + 10
         },
 
@@ -197,15 +218,59 @@ var Fireworks = (function() {
   function onWindowResize() {
     viewportWidth = window.innerWidth;
     viewportHeight = window.innerHeight;
+      if (mainContext) {
+          bannerText = new BannerText(mainContext, viewportWidth, viewportHeight);
+      }
   }
 
   // declare an API
   return {
     initialize: initialize,
-    createParticle: createParticle
+    createParticle: createParticle,
+    onWindowResize: onWindowResize
   };
 
 })();
+
+var BannerText = function(context, viewportWidth, viewportHeight, text, font) {
+  this.context = context;
+  this.text = text || "Deepthi, Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
+  this.font = font || "xx-large Verdana";
+
+  var gradient = context.createLinearGradient(0,0,viewportWidth,50);
+  gradient.addColorStop("0", "magenta");
+  gradient.addColorStop("0.5", "blue");
+  gradient.addColorStop("1.0", "green");
+
+  this.startX = viewportWidth - 10;
+  this.x = this.startX;
+  this.y = viewportHeight - 50;
+  this.gradient = gradient;
+
+  context.fillStyle = gradient;
+  context.font = this.font;
+  var t = context.measureText(this.text);
+  this.textWidth = t.width;
+  this.vel = viewportWidth / t.width * 1.1;
+};
+
+BannerText.prototype = {
+  update: function() {
+    this.x = this.x - this.vel;
+    if (this.x < - this.textWidth) {
+      this.x = this.startX;
+    }
+  },
+
+  render: function () {
+    var context = this.context;
+    context.save();
+    context.fillStyle = this.gradient;
+    context.font = this.font;
+    context.fillText(this.text, this.x, this.y);
+    context.restore();
+  }
+};
 
 /**
  * Represents a single point, so the firework being fired up
@@ -433,3 +498,7 @@ var FireworkExplosions = {
 window.onload = function() {
   Fireworks.initialize();
 };
+
+window.onresize = function() {
+  Fireworks.onWindowResize();
+}
