@@ -296,6 +296,21 @@ BannerText.prototype = {
     context.font = this.font;
     context.fillText(this.text, this.x, this.y);
     context.restore();
+  },
+
+  createFadingGradients: function(context, width) {
+    var gradients = [];
+
+    width = width || 200;
+    for(var c = 0; c < 100; c++) {
+      var grd = context.createLinearGradient(0, 0, width, 90);
+      grd.addColorStop(0, "hsl(170, " + c + "%,70%)");
+      grd.addColorStop(0.5, "hsl(300, " + c + "%,70%)");
+      grd.addColorStop(1.0, "hsl(180, " + c + "%,60%)");
+      gradients.push(grd);
+    }
+
+    return gradients;
   }
 };
 
