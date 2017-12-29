@@ -22,7 +22,8 @@ var Fireworks = (function() {
       mainContext = null,
       fireworkCanvas = null,
       fireworkContext = null,
-      bannerText = null,
+      bannerText1 = null,
+      bannerText2 = null,
       viewportWidth = 0,
       viewportHeight = 0,
       isUpdating = false;
@@ -49,7 +50,8 @@ var Fireworks = (function() {
 
     // set the dimensions on the canvas
     setMainCanvasDimensions();
-    bannerText = new BannerText(mainContext, viewportWidth, viewportHeight);
+    bannerText1 = new StaticBanner(mainContext, viewportWidth, viewportHeight);
+    bannerText2 = new MovingBanner(mainContext, viewportWidth, viewportHeight);
 
     // add the canvas in
     document.body.appendChild(mainCanvas);
@@ -183,10 +185,15 @@ var Fireworks = (function() {
   }
 
   function drawText() {
-      if (bannerText) {
-          bannerText.update();
-          bannerText.render();
-      }
+    if (!bannerText1 || !bannerText2) {
+      return;
+    }
+    bannerText1.update();
+    bannerText1.render();
+    if (bannerText1.finished) {
+      bannerText2.update();
+      bannerText2.render();
+    }
   }
 
   /**
@@ -233,12 +240,9 @@ var Fireworks = (function() {
     if (mainContext) {
       setMainCanvasDimensions();
     }
-    if (bannerText) {
-      bannerText.calculateStartX(viewportWidth);
-      if (bannerText.x > viewportWidth) {
-        bannerText.x = bannerText.startX;
-      }
-      bannerText.calculateY(viewportHeight);
+    if (bannerText2) {
+      bannerText1.resetToNewViewportSize(viewportWidth, viewportHeight);
+      bannerText2.resetToNewViewportSize(viewportWidth, viewportHeight);
     }
   }
 
@@ -251,35 +255,40 @@ var Fireworks = (function() {
 
 })();
 
-var BannerText = function(context, viewportWidth, viewportHeight, text, font) {
+var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
   this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
   this.font = font || "400% Verdana";
 
-  var gradient = context.createLinearGradient(0,0,viewportWidth,50);
-  gradient.addColorStop(0, "magenta");
-  gradient.addColorStop(0.5, "blue");
-  gradient.addColorStop(1.0, "green");
+  this.gradient = this.createBaseGradient(context, viewportWidth);
 
   this.calculateStartX(viewportWidth);
   this.x = this.startX;
   this.calculateY(viewportHeight);
-  this.gradient = gradient;
 
-  context.fillStyle = gradient;
+  context.save();
   context.font = this.font;
   var t = context.measureText(this.text);
   this.textWidth = t.width;
   this.vel = viewportWidth / t.width * 1.1;
+  context.restore();
 };
 
-BannerText.prototype = {
+MovingBanner.prototype = {
   calculateStartX: function(viewportWidth) {
     this.startX = viewportWidth - 10;
   },
 
   calculateY: function(viewportHeight) {
-    this.y = viewportHeight - 50;
+    this.y = viewportHeight - Math.floor(viewportHeight / 10);
+  },
+
+  resetToNewViewportSize: function(viewportWidth, viewportHeight) {
+    this.calculateStartX(viewportWidth);
+    if (this.x > viewportWidth) {
+      this.x = bannerText.startX;
+    }
+    this.calculateY(viewportHeight);
   },
 
   update: function() {
@@ -298,19 +307,84 @@ BannerText.prototype = {
     context.restore();
   },
 
+  createBaseGradient: function(context, width) {
+    var gradient = context.createLinearGradient(0,0,width,50);
+    gradient.addColorStop(0, "magenta");
+    gradient.addColorStop(0.5, "blue");
+    gradient.addColorStop(1.0, "green");
+    return gradient;
+  }
+
+};
+
+var StaticBanner = function(context, viewportWidth, viewportHeight, text, font) {
+  this.context = context;
+  this.text = text || "~ Deepthi ~";
+  this.font = font || "400% Sofia";
+
+  this.textWidth = this.calculateTextWidth();
+  this.textHeight = this.approximateTextHeight();
+
+  this.fadingGradients = this.createFadingGradients(context, viewportWidth);
+  this.currentFade = 0;
+  this.finished = false;
+
+  this.resetToNewViewportSize(viewportWidth, viewportHeight);
+};
+
+StaticBanner.prototype = {
   createFadingGradients: function(context, width) {
     var gradients = [];
 
     width = width || 200;
     for(var c = 0; c < 100; c++) {
-      var grd = context.createLinearGradient(0, 0, width, 90);
-      grd.addColorStop(0, "hsl(170, " + c + "%,70%)");
-      grd.addColorStop(0.5, "hsl(300, " + c + "%,70%)");
-      grd.addColorStop(1.0, "hsl(180, " + c + "%,60%)");
+      var grd = context.createLinearGradient(0, 0, width, 50);
+      grd.addColorStop(0, "hsl(170, " + c + "%, " + Math.floor(c * 0.7) + "%)");
+      grd.addColorStop(0.5, "hsl(300, " + c + "%, " + Math.floor(c * 0.7) + "%)");
+      grd.addColorStop(1.0, "hsl(180, " + c + "%, "+ Math.floor(c * 0.6) + "%)");
       gradients.push(grd);
     }
 
     return gradients;
+  },
+
+  calculateTextWidth: function (text) {
+    var context = this.context;
+    context.save();
+    context.font = this.font;
+    var t = context.measureText(text || this.text);
+    return t.width;
+  },
+
+  approximateTextHeight: function () {
+    return this.calculateTextWidth("M");
+  },
+
+  resetToNewViewportSize: function(viewportWidth, viewportHeight) {
+    this.x = Math.floor((viewportWidth - this.textWidth) * 0.4);
+    this.y = Math.floor(viewportHeight / 20) + this.textHeight;
+    while (this.x + this.textWidth >= viewportWidth*0.9) {
+      this.x = Math.floor(this.x / 2);
+    }
+  },
+
+  update: function() {
+    if (Math.floor(this.currentFade) === this.fadingGradients.length-1) {
+      this.finished = true;
+      return;
+    }
+    this.currentFade = this.currentFade + 0.2;
+  },
+
+  render: function () {
+    var context = this.context;
+    context.save();
+
+    context.fillStyle = this.fadingGradients[Math.floor(this.currentFade)];
+    context.font = this.font;
+    context.fillText(this.text, this.x, this.y);
+    context.restore();
+
   }
 };
 
