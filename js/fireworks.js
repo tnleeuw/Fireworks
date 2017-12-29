@@ -258,7 +258,7 @@ var Fireworks = (function() {
 var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
   this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
-  this.font = font || "400% Verdana";
+  this.font = font || "400% Annie Use Your Telescope";
 
   this.gradient = this.createBaseGradient(context, viewportWidth);
 
@@ -320,7 +320,7 @@ MovingBanner.prototype = {
 var StaticBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
   this.text = text || "~ Deepthi ~";
-  this.font = font || "400% Sofia";
+  this.font = font || "400% Caveat";
 
   this.textWidth = this.calculateTextWidth();
   this.textHeight = this.approximateTextHeight();
