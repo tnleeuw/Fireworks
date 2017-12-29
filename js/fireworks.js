@@ -56,6 +56,7 @@ var Fireworks = (function() {
     document.addEventListener('mouseup', createFirework, true);
     document.addEventListener('touchend', createFirework, true);
 
+    window.onorientationchange = Fireworks.onWindowResize;
     window.onresize = function () {
       Fireworks.onWindowResize();
     };
@@ -230,10 +231,11 @@ var Fireworks = (function() {
     viewportWidth = window.innerWidth;
     viewportHeight = window.innerHeight;
     if (bannerText) {
-      bannerText.startX = viewportWidth - 10;
+      bannerText.calculateStartX(viewportWidth);
       if (bannerText.x > viewportWidth) {
         bannerText.x = bannerText.startX;
       }
+      bannerText.calculateY(viewportHeight);
     }
   }
 
@@ -256,9 +258,9 @@ var BannerText = function(context, viewportWidth, viewportHeight, text, font) {
   gradient.addColorStop(0.5, "blue");
   gradient.addColorStop(1.0, "green");
 
-  this.startX = viewportWidth - 10;
+  this.calculateStartX(viewportWidth);
   this.x = this.startX;
-  this.y = viewportHeight - 50;
+  this.calculateY(viewportHeight);
   this.gradient = gradient;
 
   context.fillStyle = gradient;
@@ -269,6 +271,14 @@ var BannerText = function(context, viewportWidth, viewportHeight, text, font) {
 };
 
 BannerText.prototype = {
+  calculateStartX: function(viewportWidth) {
+    this.startX = viewportWidth - 10;
+  },
+
+  calculateY: function(viewportHeight) {
+    this.y = viewportHeight - 50;
+  },
+
   update: function() {
     this.x = this.x - this.vel;
     if (this.x < - this.textWidth) {
