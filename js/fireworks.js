@@ -230,6 +230,9 @@ var Fireworks = (function() {
   function onWindowResize() {
     viewportWidth = window.innerWidth;
     viewportHeight = window.innerHeight;
+    if (mainContext) {
+      setMainCanvasDimensions();
+    }
     if (bannerText) {
       bannerText.calculateStartX(viewportWidth);
       if (bannerText.x > viewportWidth) {
@@ -250,8 +253,8 @@ var Fireworks = (function() {
 
 var BannerText = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
-  this.text = text || "Deepthi, Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
-  this.font = font || "xx-large Verdana";
+  this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
+  this.font = font || "400% Verdana";
 
   var gradient = context.createLinearGradient(0,0,viewportWidth,50);
   gradient.addColorStop(0, "magenta");
