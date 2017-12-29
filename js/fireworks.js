@@ -190,7 +190,7 @@ var Fireworks = (function() {
     }
     bannerText1.update();
     bannerText1.render();
-    if (bannerText1.finished) {
+    if (bannerText1.startNext) {
       bannerText2.update();
       bannerText2.render();
     }
@@ -328,6 +328,7 @@ var StaticBanner = function(context, viewportWidth, viewportHeight, text, font) 
   this.fadingGradients = this.createFadingGradients(context, viewportWidth);
   this.currentFade = 0;
   this.finished = false;
+  this.startNext = false;
 
   this.resetToNewViewportSize(viewportWidth, viewportHeight);
 };
@@ -373,7 +374,10 @@ StaticBanner.prototype = {
       this.finished = true;
       return;
     }
-    this.currentFade = this.currentFade + 0.2;
+    if (this.currentFade > 30) {
+      this.startNext = true;
+    }
+    this.currentFade = this.currentFade + 0.15;
   },
 
   render: function () {
