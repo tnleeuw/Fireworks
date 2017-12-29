@@ -24,7 +24,8 @@ var Fireworks = (function() {
       fireworkContext = null,
       bannerText = null,
       viewportWidth = 0,
-      viewportHeight = 0;
+      viewportHeight = 0,
+      isUpdating = false;
 
   /**
    * Create DOM elements and get your game on
@@ -55,11 +56,17 @@ var Fireworks = (function() {
     document.addEventListener('mouseup', createFirework, true);
     document.addEventListener('touchend', createFirework, true);
 
+    window.onresize = function () {
+      Fireworks.onWindowResize();
+    };
+
+    // Create 3 fireworks to start the show
+    createFirework();
+    createFirework();
+    createFirework();
     // and now we set off
-    createTimedFirework();
     update();
-    createTimedFirework(1500);
-    createTimedFirework(2200);
+    createTimedFirework();
   }
 
   /**
@@ -74,9 +81,12 @@ var Fireworks = (function() {
      * Create a new Firework timed every few seconds
      */
   function createTimedFirework(freq) {
-    createFirework(freq);
-    freq = freq || 2000;
-    window.setTimeout(createTimedFirework, freq+(2000*Math.random()))
+      if (isUpdating) {
+        createFirework(freq);
+        isUpdating = false;
+      }
+    freq = freq || 1000;
+    window.setTimeout(createTimedFirework, freq+(1000*Math.random()))
   }
   /**
    * Creates a block of colours for the
@@ -121,6 +131,7 @@ var Fireworks = (function() {
   function update() {
     clearContext();
     requestAnimFrame(update);
+    isUpdating = true;
     drawText();
     drawFireworks();
   }
@@ -218,9 +229,12 @@ var Fireworks = (function() {
   function onWindowResize() {
     viewportWidth = window.innerWidth;
     viewportHeight = window.innerHeight;
-      if (mainContext) {
-          bannerText = new BannerText(mainContext, viewportWidth, viewportHeight);
+    if (bannerText) {
+      bannerText.startX = viewportWidth - 10;
+      if (bannerText.x > viewportWidth) {
+        bannerText.x = bannerText.startX;
       }
+    }
   }
 
   // declare an API
@@ -238,9 +252,9 @@ var BannerText = function(context, viewportWidth, viewportHeight, text, font) {
   this.font = font || "xx-large Verdana";
 
   var gradient = context.createLinearGradient(0,0,viewportWidth,50);
-  gradient.addColorStop("0", "magenta");
-  gradient.addColorStop("0.5", "blue");
-  gradient.addColorStop("1.0", "green");
+  gradient.addColorStop(0, "magenta");
+  gradient.addColorStop(0.5, "blue");
+  gradient.addColorStop(1.0, "green");
 
   this.startX = viewportWidth - 10;
   this.x = this.startX;
@@ -498,7 +512,3 @@ var FireworkExplosions = {
 window.onload = function() {
   Fireworks.initialize();
 };
-
-window.onresize = function() {
-  Fireworks.onWindowResize();
-}
