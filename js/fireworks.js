@@ -286,7 +286,7 @@ MovingBanner.prototype = {
   resetToNewViewportSize: function(viewportWidth, viewportHeight) {
     this.calculateStartX(viewportWidth);
     if (this.x > viewportWidth) {
-      this.x = bannerText.startX;
+      this.x = this.startX;
     }
     this.calculateY(viewportHeight);
   },
