@@ -258,7 +258,7 @@ var Fireworks = (function() {
 var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
   this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
-  this.font = font || "400% Annie Use Your Telescope";
+  this.font = font || "600% Annie Use Your Telescope";
 
   this.gradient = this.createBaseGradient(context, viewportWidth);
 
@@ -280,7 +280,7 @@ MovingBanner.prototype = {
   },
 
   calculateY: function(viewportHeight) {
-    this.y = viewportHeight - Math.floor(viewportHeight / 10);
+    this.y = viewportHeight - Math.floor(viewportHeight / 7.0);
   },
 
   resetToNewViewportSize: function(viewportWidth, viewportHeight) {
@@ -320,7 +320,7 @@ MovingBanner.prototype = {
 var StaticBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
   this.text = text || "~ Deepthi ~";
-  this.font = font || "400% Caveat";
+  this.font = font || "800% Caveat";
 
   this.textWidth = this.calculateTextWidth();
   this.textHeight = this.approximateTextHeight();
@@ -363,9 +363,9 @@ StaticBanner.prototype = {
 
   resetToNewViewportSize: function(viewportWidth, viewportHeight) {
     this.x = Math.floor((viewportWidth - this.textWidth) * 0.4);
-    this.y = Math.floor(viewportHeight / 20) + this.textHeight;
+    this.y = Math.floor(viewportHeight / 5.0) + this.textHeight;
     while (this.x + this.textWidth >= viewportWidth*0.9) {
-      this.x = Math.floor(this.x / 2);
+      this.x = Math.floor(this.x / 2.0);
     }
   },
 
