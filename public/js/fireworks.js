@@ -336,8 +336,9 @@ var StaticBanner = function(context, viewportWidth, viewportHeight, line, text, 
   this.textHeight = this.approximateTextHeight();
 
   this.fadingGradients = this.createFadingGradients(context, viewportWidth);
-  this.currentFade = 0;
-  this.finished = false;
+  this.twinklingGradients = this.createTwinklingGradients(context, viewportWidth);
+  this.currentStep = 0;
+  this.fadeFinished = false;
   this.startNext = false;
 
   this.resetToNewViewportSize(viewportWidth, viewportHeight);
@@ -350,9 +351,25 @@ StaticBanner.prototype = {
     width = width || 200;
     for(var c = 0; c < 100; c++) {
       var grd = context.createLinearGradient(0, 0, width, 50);
-      grd.addColorStop(0, "hsl(170, " + c + "%, " + Math.floor(c * 0.7) + "%)");
+      grd.addColorStop(0.0, "hsl(170, " + c + "%, " + Math.floor(c * 0.7) + "%)");
       grd.addColorStop(0.5, "hsl(300, " + c + "%, " + Math.floor(c * 0.7) + "%)");
-      grd.addColorStop(1.0, "hsl(180, " + c + "%, "+ Math.floor(c * 0.6) + "%)");
+      grd.addColorStop(1.0, "hsl(180, " + c + "%, " + Math.floor(c * 0.6) + "%)");
+      gradients.push(grd);
+    }
+
+    return gradients;
+  },
+
+  createTwinklingGradients: function(context, width) {
+    var gradients = [];
+
+    width = width || 200;
+    for(var i = 0; i < 100; i++) {
+      var c = (i < 50 ? 100 - i % 50 : 50 + i % 50);
+      var grd = context.createLinearGradient(0, 0, width, 50);
+      grd.addColorStop(0.0, "hsl(" + Math.floor(170 * c / 100.0) + ", " + c + "%, " + Math.floor(c * 0.7) + "%)");
+      grd.addColorStop(0.5, "hsl(" + Math.floor(300 * c / 100.0) + ", " + c + "%, " + Math.floor(c * 0.7) + "%)");
+      grd.addColorStop(1.0, "hsl(" + Math.floor(180 * c / 100.0) + ", " + c + "%, " + Math.floor(c * 0.6) + "%)");
       gradients.push(grd);
     }
 
@@ -381,21 +398,21 @@ StaticBanner.prototype = {
   },
 
   update: function() {
-    if (Math.floor(this.currentFade) === this.fadingGradients.length-1) {
-      this.finished = true;
-      return;
+    if (Math.floor(this.currentStep) === this.fadingGradients.length-1) {
+      this.fadeFinished = true;
+      this.currentStep = 0;
     }
-    if (this.currentFade > 30) {
+    if (this.currentStep > 30) {
       this.startNext = true;
     }
-    this.currentFade = this.currentFade + 0.15;
+    this.currentStep = this.currentStep + 0.15;
   },
 
   render: function () {
     var context = this.context;
     context.save();
-
-    context.fillStyle = this.fadingGradients[Math.floor(this.currentFade)];
+    var gradients = this.fadeFinished ? this.twinklingGradients : this.fadingGradients;
+    context.fillStyle = gradients[Math.floor(this.currentStep)];
     context.font = this.font;
     context.fillText(this.text, this.x, this.y);
     context.restore();
