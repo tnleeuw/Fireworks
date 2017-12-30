@@ -57,8 +57,8 @@ var Fireworks = (function() {
 
     // add the canvas in
     document.body.appendChild(mainCanvas);
-    document.addEventListener('mouseup', createFirework, true);
-    document.addEventListener('touchend', createFirework, true);
+    document.addEventListener('mouseup', createExplosionAtMouseEvent, true);
+    document.addEventListener('touchend', createExplosionAtTouchEvent, true);
 
     window.onorientationchange = Fireworks.onWindowResize;
     window.onresize = function () {
@@ -83,6 +83,19 @@ var Fireworks = (function() {
    */
   function createFirework() {
     createParticle();
+  }
+
+  function createExplosionAtMouseEvent(event) {
+    createParticle({x: event.clientX, y: event.clientY}, {y: event.clientY});
+  }
+
+  function createExplosionAtTouchEvent(event) {
+    var touch = event.touches.item(0);
+    var x = touch ? touch.clientX : event.clientX,
+        y = touch ? touch.clientY : event.clientY;
+    if (x && y) {
+      createParticle({x: x, y: y}, {y: y});
+    }
   }
 
     /**
@@ -249,7 +262,7 @@ var Fireworks = (function() {
     if (mainContext) {
       setMainCanvasDimensions();
     }
-    if (bannerText2) {
+    if (bannerText1) {
       bannerText1.resetToNewViewportSize(viewportWidth, viewportHeight);
       bannerText2.resetToNewViewportSize(viewportWidth, viewportHeight);
       bannerText3.resetToNewViewportSize(viewportWidth, viewportHeight);
@@ -267,7 +280,7 @@ var Fireworks = (function() {
 
 var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
-  this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
+  this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness! 💖 💗 💝 💞";
   this.font = font || "600% Annie Use Your Telescope";
 
   this.gradient = this.createBaseGradient(context, viewportWidth);
@@ -280,7 +293,7 @@ var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) 
   context.font = this.font;
   var t = context.measureText(this.text);
   this.textWidth = t.width;
-  this.vel = viewportWidth / t.width * 1.1;
+  this.vel = viewportWidth / t.width * 1.3;
   context.restore();
 };
 
@@ -393,7 +406,7 @@ StaticBanner.prototype = {
   resetToNewViewportSize: function(viewportWidth, viewportHeight) {
     this.x = Math.floor((viewportWidth - this.textWidth) * 0.4);
     this.y = Math.floor((viewportHeight / 10.0) + (this.textHeight * this.line * 2));
-    while (this.x + this.textWidth >= viewportWidth*0.9) {
+    while (this.x > 0 && (this.x + this.textWidth >= viewportWidth*0.9)) {
       this.x = Math.floor(this.x / 2.0);
     }
   },
