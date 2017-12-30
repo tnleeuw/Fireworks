@@ -365,11 +365,11 @@ StaticBanner.prototype = {
 
     width = width || 200;
     for(var i = 0; i < 100; i++) {
-      var c = (i < 50 ? 100 - i % 50 : 50 + i % 50);
+      var c = (i < 50 ? 25 - i % 50 : -25 + i % 50);
       var grd = context.createLinearGradient(0, 0, width, 50);
-      grd.addColorStop(0.0, "hsl(" + Math.floor(170 * c / 100.0) + ", " + c + "%, " + Math.floor(c * 0.7) + "%)");
-      grd.addColorStop(0.5, "hsl(" + Math.floor(300 * c / 100.0) + ", " + c + "%, " + Math.floor(c * 0.7) + "%)");
-      grd.addColorStop(1.0, "hsl(" + Math.floor(180 * c / 100.0) + ", " + c + "%, " + Math.floor(c * 0.6) + "%)");
+      grd.addColorStop(0.0, "hsl(170, " + (75 + c) + "%, " + (70 + c) + "%)");
+      grd.addColorStop(0.5, "hsl(300, " + (75 + c) + "%, " + (70 + c) + "%)");
+      grd.addColorStop(1.0, "hsl(180, " + (75 + c) + "%, " + (60 + Math.floor(c * (40.0 / 25.0))) + "%)");
       gradients.push(grd);
     }
 
