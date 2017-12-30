@@ -252,6 +252,7 @@ var Fireworks = (function() {
     if (bannerText2) {
       bannerText1.resetToNewViewportSize(viewportWidth, viewportHeight);
       bannerText2.resetToNewViewportSize(viewportWidth, viewportHeight);
+      bannerText3.resetToNewViewportSize(viewportWidth, viewportHeight);
     }
   }
 
