@@ -24,6 +24,7 @@ var Fireworks = (function() {
       fireworkContext = null,
       bannerText1 = null,
       bannerText2 = null,
+      bannerText3 = null,
       viewportWidth = 0,
       viewportHeight = 0,
       isUpdating = false;
@@ -51,7 +52,8 @@ var Fireworks = (function() {
     // set the dimensions on the canvas
     setMainCanvasDimensions();
     bannerText1 = new StaticBanner(mainContext, viewportWidth, viewportHeight);
-    bannerText2 = new MovingBanner(mainContext, viewportWidth, viewportHeight);
+    bannerText2 = new StaticBanner(mainContext, viewportWidth, viewportHeight, 2, "Happy 2018!");
+    bannerText3 = new MovingBanner(mainContext, viewportWidth, viewportHeight);
 
     // add the canvas in
     document.body.appendChild(mainCanvas);
@@ -70,6 +72,9 @@ var Fireworks = (function() {
     // and now we set off
     update();
     createTimedFirework();
+
+    // Workaround for Chrome displaying font in wrong size?
+    onWindowResize();
   }
 
   /**
@@ -185,7 +190,7 @@ var Fireworks = (function() {
   }
 
   function drawText() {
-    if (!bannerText1 || !bannerText2) {
+    if (!bannerText1 || !bannerText2 || !bannerText3) {
       return;
     }
     bannerText1.update();
@@ -193,6 +198,10 @@ var Fireworks = (function() {
     if (bannerText1.startNext) {
       bannerText2.update();
       bannerText2.render();
+    }
+    if (bannerText2.startNext) {
+      bannerText3.update();
+      bannerText3.render();
     }
   }
 
@@ -317,10 +326,11 @@ MovingBanner.prototype = {
 
 };
 
-var StaticBanner = function(context, viewportWidth, viewportHeight, text, font) {
+var StaticBanner = function(context, viewportWidth, viewportHeight, line, text, font) {
   this.context = context;
   this.text = text || "~ Deepthi ~";
   this.font = font || "800% Caveat";
+  this.line = line || 1;
 
   this.textWidth = this.calculateTextWidth();
   this.textHeight = this.approximateTextHeight();
@@ -354,16 +364,17 @@ StaticBanner.prototype = {
     context.save();
     context.font = this.font;
     var t = context.measureText(text || this.text);
+    context.restore();
     return t.width;
   },
 
   approximateTextHeight: function () {
-    return this.calculateTextWidth("M");
+    return this.calculateTextWidth("M") * 1.1;
   },
 
   resetToNewViewportSize: function(viewportWidth, viewportHeight) {
     this.x = Math.floor((viewportWidth - this.textWidth) * 0.4);
-    this.y = Math.floor(viewportHeight / 5.0) + this.textHeight;
+    this.y = Math.floor((viewportHeight / 10.0) + (this.textHeight * this.line * 2));
     while (this.x + this.textWidth >= viewportWidth*0.9) {
       this.x = Math.floor(this.x / 2.0);
     }
@@ -388,7 +399,6 @@ StaticBanner.prototype = {
     context.font = this.font;
     context.fillText(this.text, this.x, this.y);
     context.restore();
-
   }
 };
 
