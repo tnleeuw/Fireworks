@@ -280,7 +280,7 @@ var Fireworks = (function() {
 
 var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) {
   this.context = context;
-  this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness! 💖 💗 💝 💞";
+  this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
   this.font = font || "600% Annie Use Your Telescope";
 
   this.gradient = this.createBaseGradient(context, viewportWidth);
@@ -334,7 +334,7 @@ MovingBanner.prototype = {
     var gradient = context.createLinearGradient(0,0,width,50);
     gradient.addColorStop(0, "magenta");
     gradient.addColorStop(0.5, "blue");
-    gradient.addColorStop(1.0, "green");
+    gradient.addColorStop(1.0, "hsl(170, 80%, 80%)");
     return gradient;
   }
 
