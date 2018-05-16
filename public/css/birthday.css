@@ -1,0 +1,27 @@
+body {
+    background: no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+h1 {
+    font-size: 72px;
+    font-family: Annie Use Your Telescope, fantasy;
+    background: -webkit-linear-gradient(45deg, magenta, blue, hsl(170, 80%, 80%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 3px 2px whitesmoke;
+}
+
+h1.header {
+    text-align: center;
+    padding-right: 50px;
+}
+
+h1.greeting {
+    text-align: right;
+    padding-right: 20px;
+    padding-left: 20px;
+}
