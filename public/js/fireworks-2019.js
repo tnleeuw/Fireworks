@@ -72,10 +72,10 @@ var Fireworks = (function() {
 
     // set the dimensions on the canvas
     setMainCanvasDimensions();
+    banners.push(new MovingBanner(mainContext, viewportWidth, viewportHeight, "~ May your dreams come true ~ Let's make 2019 a better year than 2018! ~"));
     banners.push(new StaticBanner(mainContext, viewportWidth, viewportHeight, 1, "~ Deepthi ~"));
     banners.push(new StaticBanner(mainContext, viewportWidth, viewportHeight, 2, "Happy New Year"));
     banners.push(new StaticBanner(mainContext, viewportWidth, viewportHeight, 3, "To You!"));
-    banners.push(new MovingBanner(mainContext, viewportWidth, viewportHeight, "~ May your dreams come true ~ Let's make 2019 a better year than 2018! ~"));
 
     // add the canvas in
     document.body.appendChild(mainCanvas);
@@ -304,6 +304,7 @@ var MovingBanner = function(context, viewportWidth, viewportHeight, text, font) 
   this.context = context;
   this.text = text || "Wishing You A Happy New Year With Much Health, Love, Laughter and Happiness!";
   this.font = font || "600% Annie Use Your Telescope";
+  this.startNext = true;
 
   this.gradient = this.createBaseGradient(context, viewportWidth);
 
