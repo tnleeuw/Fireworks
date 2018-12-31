@@ -16,16 +16,12 @@
 
 var imagesLandscape = [
   'images/newyears-2019/backgrounds/2013-01-01-0171.jpg',
-  'images/newyears-2019/backgrounds/2013-01-01-0180.jpg',
-  'images/newyears-2019/backgrounds/2013-01-01-0181.jpg',
   'images/newyears-2019/backgrounds/DSC_0280.JPG',
   'images/newyears-2019/backgrounds/DSC_0300.JPG',
   'images/newyears-2019/backgrounds/DSC_0306.JPG',
-  'images/newyears-2019/backgrounds/DSC_0444.JPG',
-  'images/newyears-2019/backgrounds/DSC_0463.JPG',
   'images/newyears-2019/backgrounds/DSC_0488.JPG',
   'images/newyears-2019/backgrounds/DSC_0497.JPG',
-]
+];
 
 var Fireworks = (function() {
 
@@ -79,7 +75,7 @@ var Fireworks = (function() {
     banners.push(new StaticBanner(mainContext, viewportWidth, viewportHeight, 1, "~ Deepthi ~"));
     banners.push(new StaticBanner(mainContext, viewportWidth, viewportHeight, 2, "Happy New Year"));
     banners.push(new StaticBanner(mainContext, viewportWidth, viewportHeight, 3, "To You!"));
-    banners.push(new MovingBanner(mainContext, viewportWidth, viewportHeight, "Wishing You and your Family Love, Health and Happiness"));
+    banners.push(new MovingBanner(mainContext, viewportWidth, viewportHeight, "~ May your dreams come true ~ Let's make 2019 a better year than 2018! ~"));
 
     // add the canvas in
     document.body.appendChild(mainCanvas);
