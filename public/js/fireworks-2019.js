@@ -97,6 +97,7 @@ var Fireworks = (function() {
 
     // Workaround for Chrome displaying font in wrong size?
     onWindowResize();
+    // var sf = new StarField(mainCanvas, 500, ["#f8f7ff", "#9bb0ff", "#ffcc6f", "#cad7ff"], 30);
   }
 
   /**
